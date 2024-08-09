@@ -1,4 +1,4 @@
-import { cart,addToCart } from "../data/cart.js";
+import { cart,addToCart,addedMessage } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
@@ -45,7 +45,7 @@ products.forEach((product)=>{
 
             <div class="product-spacer"></div>
 
-            <div class="added-to-cart">
+            <div class="added-to-cart js-added-to-cart-${product.id}">
                 <img src="images/icons/checkmark.png">
                 Added
             </div>
@@ -76,6 +76,7 @@ document.querySelectorAll('.js-add-to-cart').forEach((button)=>{
     button.addEventListener('click',()=>{
         //button.getAttribute('data-product-name');
         const productId = button.dataset.productId;
+        addedMessage(productId);
         addToCart(productId); 
         updataCartQuantity();
 

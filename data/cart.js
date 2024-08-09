@@ -48,3 +48,20 @@ export function removeFromCart(productId){
 
     saveToStorage();
 }
+
+export function addedMessage(productId){
+    let addedMessageTimeoutID;
+    
+    const message = document.querySelector(`.js-added-to-cart-${productId}`);
+
+    message.classList.add('added-message');
+
+    if(addedMessageTimeoutID)
+            clearTimeout(timeoutID);
+
+    const timeoutID=setTimeout(()=>{
+        message.classList.remove('added-message');    
+    },2000);
+
+    addedMessageTimeoutID=timeoutID;
+}
