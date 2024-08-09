@@ -51,13 +51,13 @@ export function removeFromCart(productId){
 
 export function addedMessage(productId){
     let addedMessageTimeoutID;
-    
+
     const message = document.querySelector(`.js-added-to-cart-${productId}`);
 
     message.classList.add('added-message');
 
     if(addedMessageTimeoutID)
-            clearTimeout(timeoutID);
+        clearTimeout(timeoutID);
 
     const timeoutID=setTimeout(()=>{
         message.classList.remove('added-message');    
