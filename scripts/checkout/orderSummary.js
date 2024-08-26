@@ -113,6 +113,7 @@ export function renderOrderSummary(){
 
             container.remove();
             updateCartQuantity();
+            renderPaymentSummary();
         });
     });
 
@@ -146,6 +147,7 @@ export function renderOrderSummary(){
                 saveQuantity(productId);
             }
         });
+        
     });
 
     // Function to Save Quantity
@@ -167,6 +169,7 @@ export function renderOrderSummary(){
         quantityLabel.innerHTML = newQuantity;
 
         updateCartQuantity(); // Corrected function name
+        renderPaymentSummary();
     }
 
     document.querySelectorAll('.js-delivery-option').forEach((element)=>{
@@ -174,6 +177,7 @@ export function renderOrderSummary(){
             const {productId,deliveryOptionId} = element.dataset;
             updateDeliveryOption(productId,deliveryOptionId);
             renderOrderSummary();
+            renderPaymentSummary();
         });
     });
 }
