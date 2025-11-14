@@ -84,18 +84,18 @@ function renderProductsGrid(){
 
     document.querySelector('.js-products-grid').innerHTML=productsHTML;
 
-     function updateCartQuantity() {
-        const cartQuantity = calculateCartQuantity();
-    
-        document.querySelector('.js-cart-quantity')
-        .innerHTML = cartQuantity;
-        
+    function updateCartQuantity() {
+      const cartQuantity = calculateCartQuantity();
+      const cartQuantityElement = document.querySelector('.js-cart-quantity');
+      if (cartQuantityElement) {
+        cartQuantityElement.innerHTML = cartQuantity;
+      } 
     }
         
     updateCartQuantity();
     document.querySelectorAll('.js-add-to-cart').forEach((button)=>{
         button.addEventListener('click',()=>{
-            //button.getAttribute('data-product-name');
+                //button.getAttribute('data-product-name');
             const productId = button.dataset.productId;
             addedMessage(productId);
             addToCart(productId); 

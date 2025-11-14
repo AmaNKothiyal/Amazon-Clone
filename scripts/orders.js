@@ -41,13 +41,21 @@ async function loadPage(){
     </div>
       `;
     }).join("");
+    
+    function updateCartQuantity() {
+      const cartQuantity = calculateCartQuantity();
+      const cartQuantityElement = document.querySelector('.js-cart-quantity');
+      if (cartQuantityElement) {
+        cartQuantityElement.innerHTML = cartQuantity;
+      } 
+    }
 
     document.querySelector('.js-orders-grid').innerHTML=ordersHTML;
 
     document.querySelectorAll('.js-buy-again').forEach((button)=>{
       button.addEventListener('click',()=>{
         addToCart(button.dataset.productId);
-
+        updateCartQuantity();
         button.innerHTML='Added';
         setTimeout(() => {
           button.innerHTML = `
