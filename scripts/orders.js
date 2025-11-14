@@ -51,6 +51,9 @@ async function loadPage(){
     }
 
     document.querySelector('.js-orders-grid').innerHTML=ordersHTML;
+    
+    // Update cart quantity on page load
+    updateCartQuantity();
 
     document.querySelectorAll('.js-buy-again').forEach((button)=>{
       button.addEventListener('click',()=>{
