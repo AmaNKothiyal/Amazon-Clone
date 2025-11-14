@@ -1,56 +1,66 @@
 import { getProduct, loadProductsFetch } from '../data/products.js';
 import { orders } from '../data/orders.js';
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
-import formatCurrency from './utils/money.js';
+import { formatCurrency } from './utils/money.js';
 import { addToCart,calculateCartQuantity } from '../data/cart.js';
 
 async function loadPage(){
-  await loadProductsFetch();
-  console.log(orders);
+  try {
+    await loadProductsFetch();
+    console.log('Orders:', orders);
 
-  let ordersHTML = orders.map((order)=>{
-    const orderTimeString = dayjs(order.orderTime).format('MMMM D');
+    if (!orders || orders.length === 0) {
+      document.querySelector('.js-orders-grid').innerHTML = '<div class="no-orders-message">You have no orders yet.</div>';
+      return;
+    }
 
-    return `
-    <div class="order-container">
-    <div class="order-header">
-      <div class="order-header-left-section">
-        <div class="order-date">
-          <div class="order-header-label">Order Placed:</div>
-          <div>${orderTimeString}</div>
+    let ordersHTML = orders.map((order)=>{
+      const orderTimeString = dayjs(order.orderTime).format('MMMM D');
+
+      return `
+      <div class="order-container">
+      <div class="order-header">
+        <div class="order-header-left-section">
+          <div class="order-date">
+            <div class="order-header-label">Order Placed:</div>
+            <div>${orderTimeString}</div>
+          </div>
+          <div class="order-total">
+            <div class="order-header-label">Total:</div>
+            <div>$${formatCurrency(order.totalCostCents)}</div>
+          </div>
         </div>
-        <div class="order-total">
-          <div class="order-header-label">Total:</div>
-          <div>$${formatCurrency(order.totalCostCents)}</div>
+        <div class="order-header-right-section">
+          <div class="order-header-label">Order ID:</div>
+          <div>${order.id}</div>
         </div>
       </div>
-      <div class="order-header-right-section">
-        <div class="order-header-label">Order ID:</div>
-        <div>${order.id}</div>
+      <div class="order-details-grid">
+        ${productsListHTML(order)}
       </div>
     </div>
-    <div class="order-details-grid">
-      ${productsListHTML(order)}
-    </div>
-  </div>
-    `;
-  }).join("");
+      `;
+    }).join("");
 
-  document.querySelector('.js-orders-grid').innerHTML=ordersHTML;
+    document.querySelector('.js-orders-grid').innerHTML=ordersHTML;
 
-  document.querySelectorAll('.js-buy-again').forEach((button)=>{
-    button.addEventListener('click',()=>{
-      addToCart(button.dataset.productId);
+    document.querySelectorAll('.js-buy-again').forEach((button)=>{
+      button.addEventListener('click',()=>{
+        addToCart(button.dataset.productId);
 
-      button.innerHTML='Added';
-      setTimeout(() => {
-        button.innerHTML = `
-          <img class="buy-again-icon" src="images/icons/buy-again.png">
-          <span class="buy-again-message">Buy it again</span>
-        `;
-      }, 1000);
+        button.innerHTML='Added';
+        setTimeout(() => {
+          button.innerHTML = `
+            <img class="buy-again-icon" src="images/icons/buy-again.png">
+            <span class="buy-again-message">Buy it again</span>
+          `;
+        }, 1000);
+      });
     });
-  });
+  } catch (error) {
+    console.error('Error loading orders page:', error);
+    document.querySelector('.js-orders-grid').innerHTML = '<div class="error-message">Error loading orders. Please refresh the page.</div>';
+  }
 }
 
 function productsListHTML(order) {
@@ -60,6 +70,11 @@ function productsListHTML(order) {
   }
   return order.products.map((productDetails) => {
     const product=getProduct(productDetails.productId);
+    
+    if (!product) {
+      console.error(`Product not found for ID: ${productDetails.productId}`);
+      return '';
+    }
     
       return `
           <div class="product-image-container">
@@ -89,14 +104,27 @@ function productsListHTML(order) {
 }
 
 function updateCartQuantity() {
-  const cartQuantity = calculateCartQuantity();
-    
-  document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
-
+  try {
+    const cartQuantity = calculateCartQuantity();
+    const cartQuantityElement = document.querySelector('.js-cart-quantity');
+    if (cartQuantityElement) {
+      cartQuantityElement.innerHTML = cartQuantity;
+    }
+  } catch (error) {
+    console.error('Error updating cart quantity:', error);
+  }
 }
 
-updateCartQuantity();
-loadPage(); 
+// Wait for DOM to be ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    updateCartQuantity();
+    loadPage();
+  });
+} else {
+  updateCartQuantity();
+  loadPage();
+} 
 
 
 
